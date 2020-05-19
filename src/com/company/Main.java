@@ -7,6 +7,7 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -28,6 +29,24 @@ public class Main {
         employees.add(snow);
         employees.add(red);
         employees.add(charming);
+
+        Function<Employee,String> getLastName = (Employee employee) -> {
+            return employee.getName().substring(employee.getName().indexOf(" ")+1);
+        };
+        Function<Employee,String> getFirstName = (Employee employee) -> {
+            return employee.getName().substring(0, employee.getName().indexOf(" "));
+        };
+
+
+        Random random1= new Random();
+        for(Employee employee:employees){
+            if(random1.nextBoolean())
+            getName(getFirstName,employee);
+            else
+                getName(getLastName,employee);
+        }
+        employees.forEach(employee ->
+                System.out.println(getLastName.apply(employee)));
 
 //        printEmployeesByAge(employees, "Employees over 30", employee -> employee.getAge() > 30);
 //        printEmployeesByAge(employees, "\nEmployees 30 and under", employee ->employee.getAge() <= 30);
@@ -63,7 +82,15 @@ public class Main {
 
         }
 
+        employees.forEach(employee -> {
+            String lastName = employee.getName().substring(employee.getName().indexOf(" ")+1);
+            System.out.println("last name: " +lastName);
+        });
     }
+    private static String getName(Function<Employee,String> getName,Employee employee){
+        return getName.apply(employee);
+    }
+
     private static void printEmployeesNameByAge(List<Employee> employees,
                                                 String ageText,
                                                 Predicate<Employee> ageCondition){
