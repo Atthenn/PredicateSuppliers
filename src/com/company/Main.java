@@ -7,10 +7,7 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
-import java.util.function.IntPredicate;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public class Main {
 
@@ -41,16 +38,30 @@ public class Main {
         Random random1= new Random();
         for(Employee employee:employees){
             if(random1.nextBoolean())
-            getName(getFirstName,employee);
+                System.out.println(getName(getFirstName,employee));
             else
-                getName(getLastName,employee);
+                System.out.println(getName(getLastName,employee));
         }
+        Function<Employee,String> upperCase = employee -> employee.getName().toUpperCase();
+        Function<String,String> firstName = name -> name.substring(0,name.indexOf(" "));
+        Function chainedFunction = upperCase.andThen(firstName);
+        System.out.println("*******"+chainedFunction.apply(employees.get(0)));
+
+        BiFunction<Employee,String,String> concatAge = (Employee employee, String name) -> name+" "+employee.getAge();
+        String upperName = upperCase.apply(employees.get(0));
+        System.out.println(concatAge.apply(employees.get(0),upperName));
+
+        IntUnaryOperator incBy5 = i -> i+5;
+        System.out.println(incBy5.applyAsInt(13));
+
+        Consumer<String> c1 = i -> i.toUpperCase();
+        Consumer<String> c2 = i -> System.out.println(i);
+
+        c1.andThen(c2).accept("Hello World!");
+
+
         employees.forEach(employee ->
                 System.out.println(getLastName.apply(employee)));
-
-//        printEmployeesByAge(employees, "Employees over 30", employee -> employee.getAge() > 30);
-//        printEmployeesByAge(employees, "\nEmployees 30 and under", employee ->employee.getAge() <= 30);
-
 
         employees.forEach(employee -> {
             if (employee.getAge() > 30) {
@@ -103,17 +114,4 @@ public class Main {
         }
     }
 
-
- //   private static void printEmployeesByAge(List<Employee> employees,
-//                                            String ageText,
-//                                            Predicate<Employee> ageCondition) {
-//
-//        System.out.println(ageText);
-//        System.out.println("==================");
-//        for(Employee employee : employees) {
-//            if (ageCondition.test(employee)) {
-//                System.out.println(employee.getName());
-//            }
-//        }
-//    }
 }
